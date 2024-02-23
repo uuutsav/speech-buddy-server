@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv'
 import multer from 'multer';
 import { transcriptModule } from './assemblyAI.mjs';
-import {compare, correctArr, incorrectArr, missedArr } from './rate.mjs'
+import { compare, correctArr, incorrectArr, missedArr } from './rate.mjs'
 
 dotenv.config();
 app.use(bodyParser.json());
@@ -47,18 +47,20 @@ let shlok_number = 1;
 const getDataFromAPI = async () => {
   // src = https://bhagavadgitaapi.in/#get-slokchsl
   const API_Url = "https://bhagavadgitaapi.in/slok/" + chapter + "/" + shlok_number + "/";
-  console.log(API_Url)
+  // console.log(API_Url)
 
   try {
     const shlok = await axios.get(API_Url);
-    // console.log(shlok.data)
-    // console.log(shlok.data.san.et);
     // console.log(shlok.data.gambir.et);
     generatedString = shlok.data.san.et
+    if (generatedString.length < 100) {
+      generatedString = shlok.data.gambir.et
+    }
     console.log(generatedString);
-
+    shlok_number++;
   } catch (error) {
     console.log("Error in fetching data from API\n\n" + error);
+    getDataFromAPI()
   }
 }
 
@@ -74,48 +76,63 @@ app.get("/api", (req, resp) => {
 })
 
 app.get("/generatePara", async (req, resp) => {
-  console.log("Para");
   await getDataFromAPI();
 
   resp.json({
-    msg: "HEHEHE"
+    text: generatedString
   })
 });
 app.get("/generateChuck", async (req, resp) => {
-  const response = await axios.get("https://api.chucknorris.io/jokes/random");
-  generatedString = response.data.value;
-	console.log(generatedString);
+  try {
+    const response = await axios.get("https://api.chucknorris.io/jokes/random");
+    generatedString = response.data.value;
+    console.log(generatedString);
+  } catch (error) {
+    console.log("Error in fetching data from API\n\n" + error);
+    setTimeout(async () => {
+      try {
+        const response = await axios.get("https://api.chucknorris.io/jokes/random");
+        generatedString = response.data.value;
+        console.log(generatedString);
+      } catch (error) {
+        console.log(error)
+      }
+    }, 1230);
+  }
 
   resp.json({
-    msg: "HEHEHE"
+    text: generatedString
   })
 });
 app.get("/generateChuckSearch", async (req, resp) => {
-  const search = "cat"
-  const url = "https://api.chucknorris.io/jokes/search?query="+ search;
-  let response = await axios.get(url);
-  let index = 0;
-  if (response.data.total > 0){
-    // generatedString = response.data.value;
-    index = parseInt(Math.random(0, response.data.total) * 10);
-    generatedString = response.data.result[index].value;
+  try {
+    const search = "cat"
+    const url = "https://api.chucknorris.io/jokes/search?query=" + search;
+    let response = await axios.get(url);
+    let index = 0;
+    if (response.data.total > 0) {
+      // generatedString = response.data.value;
+      index = parseInt(Math.random(0, response.data.total) * 10);
+      generatedString = response.data.result[index].value;
+    } else {
+      // no search result
+      response = await axios.get("https://api.chucknorris.io/jokes/random");
+      generatedString = response.data.value;
+    }
+    console.log(generatedString);
 
-  } else {
-    // no search result
-    response = await axios.get("https://api.chucknorris.io/jokes/random");
-    generatedString = response.data.value;
+  } catch (error) {
+    console.log("Error in fetching data from API\n\n" + error);
+
   }
-  
-	console.log(generatedString);
 
   resp.json({
-    msg: "HEHEHE"
+    text: generatedString
   })
 })
 
 app.post('/transcribeAudio', upload.single('audio'), async (req, resp) => {
   const audioBlob = req.file.buffer;
-  // console.log(audioBlob);
   console.log("Generated Text: ", generatedString)
 
   const transcripts = await transcriptModule(audioBlob)

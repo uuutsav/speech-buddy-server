@@ -1,7 +1,7 @@
 import _ from "lodash";
 
-const a = "Hello, my name is Utsav!"
-const b = " my name utsav bruh"
+// const a = "Hello, my name is Utsav!"
+// const b = " my name utsav bruh"
 
 let correctArr = []
 let incorrectArr = []
@@ -15,9 +15,9 @@ export const compare = (generatedString, transcriptedString) => {
     incorrectArr = _.difference(arrT, arrG);
     missedArr = _.difference(arrG, arrT);
 
-    console.log(correctArr)
-    console.log(incorrectArr)
-    console.log(missedArr)
+    // console.log(correctArr)
+    // console.log(incorrectArr)
+    // console.log(missedArr)
 
     /* mkc, implement library logcs for now, precise manual logc for later versions
 

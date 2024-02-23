@@ -8,7 +8,7 @@ const client = new AssemblyAI({
 
 
 export const transcriptModule = async (audioURL) => {
-  console.log(audioURL);
+  // console.log(audioURL);
 
   let transcript = await client.transcripts.transcribe({
     audio: audioURL,

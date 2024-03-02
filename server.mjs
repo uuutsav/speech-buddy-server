@@ -132,23 +132,28 @@ app.get("/generateChuckSearch", async (req, resp) => {
 })
 
 app.post('/transcribeAudio', upload.single('audio'), async (req, resp) => {
-  const audioBlob = req.file.buffer;
-  console.log("Generated Text: ", generatedString)
+  try {
+    const audioBlob = req.file.buffer;
+    console.log("Generated Text: ", generatedString)
 
-  const transcripts = await transcriptModule(audioBlob)
-  console.log("Transcripts: ", transcripts);
+    const transcripts = await transcriptModule(audioBlob)
+    console.log("Transcripts: ", transcripts);
 
-  compare(generatedString, transcripts);
+    compare(generatedString, transcripts);
 
-  const result = {
-    message: "Hehe",
-    correctArr: correctArr,
-    incorrectArr: incorrectArr,
-    missedArr: missedArr
+    const result = {
+      message: "Hehe",
+      correctArr: correctArr,
+      incorrectArr: incorrectArr,
+      missedArr: missedArr
+    }
+    console.log(result)
+
+    resp.status(200).send(result);
+  } catch (error) {
+    console.log("Try again")
   }
-  console.log(result)
 
-  resp.status(200).send(result);
 })
 
 

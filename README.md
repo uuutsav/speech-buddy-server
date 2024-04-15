@@ -13,7 +13,7 @@ cd speech-buddy
 git clone https://github.com/uuutsav/speech-buddy-server.git
 ```
 - Check out client repository
- [Server Repo](https://github.com/uuutsav/speech-buddy-client).
+ [Client Repo](https://github.com/uuutsav/speech-buddy-client).
 
 
 ```

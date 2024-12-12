@@ -1,4 +1,4 @@
-
+# Note - Entire backend for [Speech Buddy](https://uuutsav.github.io/speech-buddy-client/) has been dropped and is no longer relevant.
 # Setting Up
 
 - Make parent repository (Skip if already done)
